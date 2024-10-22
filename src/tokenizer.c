@@ -92,3 +92,53 @@ char *copy_str(char *inStr, short len) {
 
   return copy;
 }
+
+/* Returns a freshly allocated zero-terminated vector of freshly allocated 
+   space-separated tokens from zero-terminated str.
+
+   For example, tokenize("hello world string") would result in:
+     tokens[0] = "hello"
+     tokens[1] = "world"
+     tokens[2] = "string" 
+     tokens[3] = 0
+*/
+char **tokenize(char *str)
+{
+  int num_tokens = count_tokens(str);
+  char **tokens = (char **)malloc((num_tokens + 1) * sizeof(char *));
+  if (tokens == NULL)
+  {
+    return NULL; // Memory allocation failed
+  }
+
+  int token_index = 0;
+  char *start = token_start(str);
+  while (*start != '\0')
+  {
+    char *end = token_terminator(start);
+    int length = end - start; // Find the length of the current token
+    // Copy token into freshly allocated string
+    tokens[token_index] = copy_str(start, length);
+    token_index++; // move to next token
+    start = token_start(end);
+  }
+  tokens[token_index] = NULL;
+
+  return tokens;
+}
+
+/* Prints all tokens. */
+void print_tokens(char **tokens) {
+  for (int i = 0; tokens[i] != NULL; i++)
+  {
+    printf("%s\n", tokens[i]);
+  }
+}
+
+/* Frees all tokens and the vector containing them. */
+void free_tokens(char **tokens) {
+    for (int i = 0; tokens[i] != NULL; i++) {
+        free(tokens[i]);  // Free each token
+    }
+    free(tokens);  // Free the array of pointers
+}
